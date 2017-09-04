@@ -1,9 +1,10 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView
 
 from .models import RestaurantLocation
+from .forms import RestaurantCreateForm, RestaurantLocationCreateForm
 
 # Create your views here.
 
@@ -44,16 +45,16 @@ class RestaurantListView(ListView):
 class RestaurantDetailView(DetailView):
   queryset = RestaurantLocation.objects.all()
 
-  def get_context_data(self, *args, **kwargs):
-    print(self.kwargs)
-    context = super(RestaurantDetailView, self).get_context_data(*args, **kwargs)
-    print(context)
-    return context
+  # def get_context_data(self, *args, **kwargs):
+  #   print(self.kwargs)
+  #   context = super(RestaurantDetailView, self).get_context_data(*args, **kwargs)
+  #   print(context)
+  #   return context
 
-  def get_object(self, *args, **kwargs):
-    rest_id = self.kwargs.get("rest_id")
-    obj = get_object_or_404(RestaurantLocation, id=rest_id)
-    return obj
+  # def get_object(self, *args, **kwargs):
+  #   rest_id = self.kwargs.get("rest_id")
+  #   obj = get_object_or_404(RestaurantLocation, id=rest_id)
+  #   return obj
 
 
 # class SearchRestaurantListView(ListView):
@@ -72,3 +73,45 @@ class RestaurantDetailView(DetailView):
 # class YangjiangRestaurantListView(ListView):
 #   queryset = RestaurantLocation.objects.filter(location__iexact='yangjiang')
 #   template_name = 'restaurants/restaurant_list.html'
+
+# def restaurant_createview(request):
+#   # if request.method == 'GET':
+#   #   print("get data")
+#   form = RestaurantCreateForm(request.POST or None)
+#   errors = None
+#     # if request.method == 'POST':
+#     # print("post data")
+#     # title = request.POST.get('title')
+#     # location = request.POST.get('location')
+#     # category = request.POST.get('category')
+#     # form = RestaurantCreateForm(request.POST)
+#   if form.is_valid():
+#     obj = RestaurantLocation.objects.create(
+#       name = form.cleaned_data.get('name'),
+#       location = form.cleaned_data.get('location'),
+#       category = form.cleaned_data.get('category')
+#     )
+#     return HttpResponseRedirect("/restaurants/")
+#   if form.errors:
+#     errors =form.errors
+#   template_name = 'restaurants/form.html'
+#   context = {"form": form, "errors": errors}
+#   return render(request, template_name, context)
+
+def restaurant_createview(request):
+  form = RestaurantLocationCreateForm(request.POST or None)
+  errors = None
+  if form.is_valid():
+    form.save()
+    return HttpResponseRedirect("/restaurants/")
+  if form.errors:
+    errors = form.errors
+  template_name = 'restaurants/form.html'
+  context = {"form": form, "errors": errors}
+  return render(request, template_name, context)
+
+
+class RestaurantCreateView(CreateView):
+  form_class = RestaurantLocationCreateForm
+  template_name = "restaurants/form.html"
+  success_url = "/restaurants/"

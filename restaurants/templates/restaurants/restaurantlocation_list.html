@@ -2,10 +2,11 @@
 
 {% block content %}
 <h1>Restaurants List</h1>
+<h3><a href="create/">create</a></h3>
 
 <ul>
   {% for obj in object_list %}
-    <li>{{ obj.name }} {{ obj.location }}</li>
+    <li><a href=/restaurants/{{ obj.slug }}/>{{ obj.name }}</a> {{ obj.location }}</li>
   {% endfor %}
 </ul>
 
