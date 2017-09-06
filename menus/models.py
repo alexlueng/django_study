@@ -24,6 +24,9 @@ class Item(models.Model):
 	# # return f"/restaurants/"
 	# 	return reverse('items:detail', kwargs={'pk': self.pk})
 
+	def __str__(self):
+		return self.name
+
 	def get_absolute_url(self):
 		return reverse('menus:detail', kwargs={'pk': self.pk})
 
