@@ -4,25 +4,43 @@
 
 
 <div class='col-sm-8 col-sm-offset-2'>
-
-
-{% for post in obj %}
-<div class="row">
-  <div class="col-sm-12">
-    <div class="thumbnail">
-      <!-- <img src="..." alt="..."> -->
-      <div class="caption">
-        <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-        <p>{{ post.content|linebreaks|truncatechars:120 }}<small>{{ post.timestamp|timesince }} ago </small></p>
-        <p><a href="#" class="btn btn-primary" role="button">View</a></p>
+  {% for post in obj %}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="thumbnail">
+          {% if post.image %}
+            <img src="{{ post.image.url }}" class="img-responsive" />
+          {% endif %}
+        <div class="caption">
+          <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          <p>{{ post.content|linebreaks|truncatechars:120 }}<small>{{ post.timestamp|timesince }} ago </small></p>
+          <p><a href="#" class="btn btn-primary" role="button">View</a></p>
+        </div>
       </div>
     </div>
+    <hr />
   </div>
-  <hr />
+  {% endfor %}
+
+  <div class="pagination">
+      <span class="step-links">
+          {% if obj.has_previous %}
+              <a href="?page={{ obj.previous_page_number }}">previous</a>
+          {% endif %}
+
+          <span class="current">
+              Page {{ obj.number }} of {{ obj.paginator.num_pages }}.
+          </span>
+
+          {% if obj.has_next %}
+              <a href="?page={{ obj.next_page_number }}">next</a>
+          {% endif %}
+      </span>
+  </div>
+
 </div>
-{% endfor %}
 
 
-</div>
+
 
 {% endblock %}
